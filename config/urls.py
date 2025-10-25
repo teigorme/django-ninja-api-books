@@ -14,19 +14,21 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path
 from ninja import NinjaAPI
+from src.books.api import book_router
 
-api = NinjaAPI(title="Bookly",description="Web server for Bookly API")
+version = "v1"
 
+api = NinjaAPI(
+    title="Bookly", description="Web server for Bookly API", docs_url="/docs"
+)
 
-@api.get("/add")
-def add(request, a: int, b: int):
-    return {"result": a + b}
-
+api.add_router(prefix="/books/", router=book_router, tags=["books"])
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("v1/api/", api.urls),
+    path(version + "/api/", api.urls),
 ]
